@@ -24,13 +24,13 @@ Add to config
 
 ```javascript
 {
-			module: "MMM-HomeAssistant",
-			position: "top_right",
-			config: {
-        			updateInterval: 300000, // 5 min
-				homeAssistantUrl: "http://HomeAssistant_URL:PORT",
-				accessToken: "TOKEN", // Insert your token (https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token)
-				entities: ["sensor.temperature", "sensor.humidity"] // Add your Sensors or other Entities
-			}
+	module: "MMM-HomeAssistant",
+	position: "top_right",
+	config: {
+		updateInterval: 300000, // 5 min
+		homeAssistantUrl: "http://HomeAssistant_URL:PORT",
+		accessToken: "TOKEN", // Insert your token (https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token)
+		entities: ["sensor.temperature", "sensor.humidity"] // Add your Sensors or other Entities
+		}
 }
 ```
