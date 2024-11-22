@@ -1,0 +1,11 @@
+{
+    "name": "MMM-HomeAssistant",
+    "version": "1.0.0",
+    "description": "A Magic Mirror module to display data from Home Assistant",
+    "main": "MMM-HomeAssistant.js",
+    "dependencies": {
+        "node-fetch": "^2.6.1"
+    },
+    "author": "Dawi",
+    "license": "MIT"
+}
