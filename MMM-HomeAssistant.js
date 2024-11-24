@@ -32,7 +32,7 @@ Module.register("MMM-HomeAssistant", {
     },
 
     processData: function(data) {
-        this.entities = data.filter(entity => this.config.entities.includes(entity.entity_id));
+        this.entities = data.filter(entity => this.config.entities.some(configEntity => configEntity.entity_id === entity.entity_id));
         this.updateDom();
     },
 
@@ -42,18 +42,48 @@ Module.register("MMM-HomeAssistant", {
             self.sendSocketNotification("GET_HOME_ASSISTANT_DATA", {
                 homeAssistantUrl: self.config.homeAssistantUrl,
                 accessToken: self.config.accessToken
-                    });
+            });
         }, this.config.updateInterval);
     },
 
     getDom: function() {
         var wrapper = document.createElement("div");
+        wrapper.style.display = "flex"; // Next to each other
+        wrapper.style.flexDirection = "column"; // Vertical
+        wrapper.style.alignItems = "flex-end"; // Right
+
+        var sensorsWrapper = document.createElement("div");
+        sensorsWrapper.style.display = "flex"; // Entities next to each other
+
+        var alertDiv = null;
+
         this.entities.forEach(entity => {
-            var entityDiv = document.createElement("div");
+            var configEntity = this.config.entities.find(configEntity => configEntity.entity_id === entity.entity_id);
             var unit = entity.attributes.unit_of_measurement ? ` ${entity.attributes.unit_of_measurement}` : "";
-            entityDiv.innerHTML = `${entity.attributes.friendly_name}: ${entity.state}${unit}`;
-            wrapper.appendChild(entityDiv);
+
+            // Check if its above, below or equal
+            if (configEntity.threshold !== undefined) {
+                if ((configEntity.thresholdType === "above" && parseFloat(entity.state) > configEntity.threshold) ||
+                    (configEntity.thresholdType === "below" && parseFloat(entity.state) < configEntity.threshold) ||
+                    (configEntity.thresholdType === "equal" && parseFloat(entity.state) === configEntity.threshold)) {
+                    var entityDiv = document.createElement("div");
+                    entityDiv.innerHTML = `${entity.state}${unit}`;
+                    entityDiv.style.marginRight = "10px"; // Space between Entities
+                    sensorsWrapper.appendChild(entityDiv);
+                }
+            } else {
+                var entityDiv = document.createElement("div");
+                entityDiv.innerHTML = `${entity.state}${unit}`;
+                entityDiv.style.marginRight = "10px"; // Space between Entities
+                sensorsWrapper.appendChild(entityDiv);
+            }
         });
+
+        wrapper.appendChild(sensorsWrapper);
+        if (alertDiv) {
+            wrapper.appendChild(alertDiv);
+        }
+
         return wrapper;
     },
 
