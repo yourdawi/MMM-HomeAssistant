@@ -39,7 +39,10 @@ Module.register("MMM-HomeAssistant", {
     scheduleUpdate: function() {
         var self = this;
         setInterval(function() {
-            self.getData();
+            self.sendSocketNotification("GET_HOME_ASSISTANT_DATA", {
+                homeAssistantUrl: self.config.homeAssistantUrl,
+                accessToken: self.config.
+                    });
         }, this.config.updateInterval);
     },
 
