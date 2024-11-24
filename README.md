@@ -24,13 +24,18 @@ Add to config
 
 ```javascript
 {
-	module: "MMM-HomeAssistant",
-	position: "top_right",
-	config: {
-		updateInterval: 300000, // 5 min
-		homeAssistantUrl: "http://HomeAssistant_URL:PORT",
-		accessToken: "TOKEN", // Insert your token (https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token)
-		entities: ["sensor.temperature", "sensor.humidity"] // Add your Sensors or other Entities
-		}
+    module: "MMM-HomeAssistant",
+    position: "top_right",
+    config: {
+        homeAssistantUrl: "http://localhost:8123",
+        accessToken: "YOUR_ACCESS_TOKEN",
+        entities: [
+            { entity_id: "sensor.humidity", threshold: 70, thresholdType: "above" }, // Example for above
+            { entity_id: "sensor.temp", threshold: 18, thresholdType: "below" }, // Example for below
+            { entity_id: "sensor.door" }, // Without limitation
+            { entity_id: "sensor.water", threshold: 50, thresholdType: "equal" } // Example for equal
+        ]
+    }
 }
+
 ```
