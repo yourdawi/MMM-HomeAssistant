@@ -32,7 +32,7 @@ Add to config
         entities: [
             { entity_id: "sensor.humidity", threshold: 70, thresholdType: "above" }, // Example for above
             { entity_id: "sensor.temp", threshold: 18, thresholdType: "below" }, // Example for below
-            { entity_id: "sensor.door" }, // Without limitation
+            { entity_id: "sensor.door", useFriendlyName: false, displayName: "First Door" }, // Without limitation and specific name
             { entity_id: "sensor.water", threshold: 50, thresholdType: "equal" } // Example for equal
         ]
     }
