@@ -7,11 +7,8 @@ Module.register("MMM-HomeAssistant", {
     },
 
     start: function() {
-        this.sendSocketNotification("GET_HOME_ASSISTANT_DATA", {
-            homeAssistantUrl: this.config.homeAssistantUrl,
-            accessToken: this.config.accessToken
-        });
         this.scheduleUpdate();
+        this.getData();
     },
 
     getData: function() {
@@ -39,50 +36,31 @@ Module.register("MMM-HomeAssistant", {
     scheduleUpdate: function() {
         var self = this;
         setInterval(function() {
-            self.sendSocketNotification("GET_HOME_ASSISTANT_DATA", {
-                homeAssistantUrl: self.config.homeAssistantUrl,
-                accessToken: self.config.accessToken
-            });
+            self.getData();
         }, this.config.updateInterval);
     },
 
     getDom: function() {
         var wrapper = document.createElement("div");
-        wrapper.style.display = "flex"; // Next to each other
-        wrapper.style.flexDirection = "column"; // Vertical
-        wrapper.style.alignItems = "flex-end"; // Right
-
-        var sensorsWrapper = document.createElement("div");
-        sensorsWrapper.style.display = "flex"; // Entities next to each other
-
-        var alertDiv = null;
+        wrapper.style.display = "flex";
+        wrapper.style.flexDirection = "column";
+        wrapper.style.alignItems = "flex-start"; // Align entities to the left
 
         this.entities.forEach(entity => {
             var configEntity = this.config.entities.find(configEntity => configEntity.entity_id === entity.entity_id);
             var unit = entity.attributes.unit_of_measurement ? ` ${entity.attributes.unit_of_measurement}` : "";
+            var displayName = configEntity.useFriendlyName ? entity.attributes.friendly_name : configEntity.displayName || "";
 
-            // Check if its above, below or equal
-            if (configEntity.threshold !== undefined) {
-                if ((configEntity.thresholdType === "above" && parseFloat(entity.state) > configEntity.threshold) ||
-                    (configEntity.thresholdType === "below" && parseFloat(entity.state) < configEntity.threshold) ||
-                    (configEntity.thresholdType === "equal" && parseFloat(entity.state) === configEntity.threshold)) {
-                    var entityDiv = document.createElement("div");
-                    entityDiv.innerHTML = `${entity.state}${unit}`;
-                    entityDiv.style.marginRight = "10px"; // Space between Entities
-                    sensorsWrapper.appendChild(entityDiv);
-                }
-            } else {
+            if (configEntity.threshold === undefined || 
+               (configEntity.thresholdType === "above" && parseFloat(entity.state) > configEntity.threshold) || 
+               (configEntity.thresholdType === "below" && parseFloat(entity.state) < configEntity.threshold) || 
+               (configEntity.thresholdType === "equal" && parseFloat(entity.state) === configEntity.threshold)) {
                 var entityDiv = document.createElement("div");
-                entityDiv.innerHTML = `${entity.state}${unit}`;
-                entityDiv.style.marginRight = "10px"; // Space between Entities
-                sensorsWrapper.appendChild(entityDiv);
+                entityDiv.innerHTML = `${displayName ? displayName + ': ' : ''}${entity.state}${unit}`;
+                entityDiv.style.marginBottom = "10px"; // Space between entities
+                wrapper.appendChild(entityDiv);
             }
         });
-
-        wrapper.appendChild(sensorsWrapper);
-        if (alertDiv) {
-            wrapper.appendChild(alertDiv);
-        }
 
         return wrapper;
     },
