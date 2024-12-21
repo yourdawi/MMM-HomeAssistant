@@ -49,7 +49,7 @@ Module.register("MMM-HomeAssistant", {
         this.entities.forEach(entity => {
             var configEntity = this.config.entities.find(configEntity => configEntity.entity_id === entity.entity_id);
             var unit = entity.attributes.unit_of_measurement ? ` ${entity.attributes.unit_of_measurement}` : "";
-            var displayName = configEntity.useFriendlyName ? entity.attributes.friendly_name : configEntity.displayName || "";
+            var displayName = (configEntity.useFriendlyName === undefined || configEntity.useFriendlyName) ? entity.attributes.friendly_name : configEntity.displayName || "";
 
             if (configEntity.threshold === undefined || 
                (configEntity.thresholdType === "above" && parseFloat(entity.state) > configEntity.threshold) || 
